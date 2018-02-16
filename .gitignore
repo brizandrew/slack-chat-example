@@ -1,0 +1,25 @@
+# Mac
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python
+*.pyc
+.coverage
+.env
+django.log
+django.log*
+*.egg-*
+.static/
+.media/
+celery.log
+*.sqlite
+*.sqlite3
+.docs
+
+# Custom
+chat/.json/*.jsonp
