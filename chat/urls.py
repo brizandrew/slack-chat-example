@@ -32,11 +32,6 @@ urlpatterns = [
     # Chats
     #
     url(
-        r'^live/(?P<channel>.*)$',
-        staff_member_required(chat_views.ChatLive.as_view()),
-        name='chat_live'
-    ),
-    url(
         r'^api/(?P<channel>.*)$',
         chat_views.ChatJson.as_view(),
         name='chat_api'

@@ -1,6 +1,6 @@
 import logging
 import calendar
-from django.views.generic import View, TemplateView
+from django.views.generic import View
 from chat.models import ChatChannel, ChatMessage
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 from django.test.client import RequestFactory
@@ -45,34 +45,6 @@ class ChatMessageMixin(object):
             return True
         else:
             return False
-
-
-class ChatLive(TemplateView, ChatMessageMixin):
-    """
-    View to preview a Chat channel and its messages.
-    """
-    template_name = 'preview.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ChatLive, self).get_context_data(**kwargs)
-
-        context.update({
-            'development': settings.DEVELOPMENT,
-            'bucket': settings.AWS_BUCKET_NAME,
-            'channel': self.channel,
-            'messages': self.messages
-        })
-        return context
-
-    def get(self, request, *args, **kwargs):
-        if self.get_chat_messages(self.kwargs['channel']):
-            return super(ChatLive, self).get(request, *args, **kwargs)
-        else:
-            html = get_template('404.html').render()
-            return HttpResponse(
-                html,
-                status=404
-            )
 
 
 class ChatJson(View, ChatMessageMixin):
