@@ -15,6 +15,8 @@ if __name__ == "__main__":
     for i in cp.items('django'):
         os.environ[i[0]] = i[1]
 
+    # Load the settings
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "chat.settings")
+
     from django.core.management import execute_from_command_line
     execute_from_command_line(sys.argv)

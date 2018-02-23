@@ -1,4 +1,3 @@
-import logging
 import re
 import json
 import os
@@ -6,7 +5,6 @@ import views as chat_views
 from chat.models import ChatChannel, ChatUser, ChatMessage
 from django.conf import settings
 from slackclient import SlackClient
-logger = logging.getLogger(__name__)
 
 CHAT_COMMENT_TAG = '&lt;#&gt;'
 

@@ -1,4 +1,3 @@
-import logging
 import calendar
 from django.views.generic import View
 from chat.models import ChatChannel, ChatMessage
@@ -10,9 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import get_template
 from django.conf import settings
 from events import SlackEventHandler
-
-
-logger = logging.getLogger(__name__)
 
 
 class SlackEventWebhook(SingleObjectMixin, View):
@@ -66,16 +62,9 @@ class ChatJson(View, ChatMessageMixin):
         """
         output_messages = []
         for message in self.messages:
-            last_modified_datetime = None
-            if message.last_modified_datetime is not None:
-                last_modified_datetime = calendar.timegm(
-                    message.last_modified_datetime.utctimetuple()
-                )
-
             output_message = {
                 'html': message.html,
                 'ts': message.ts,
-                'last_modified_datetime': last_modified_datetime,
                 'user': {
                     'image_48': message.user.image_48,
                     'display_name': message.user.display_name

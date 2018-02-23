@@ -1,5 +1,6 @@
 import os
 
+# Setting Up directory paths
 SETTINGS_DIR = os.path.dirname(os.path.realpath(__file__))
 ROOT_DIR = os.path.join(
     os.path.abspath(
@@ -8,22 +9,26 @@ ROOT_DIR = os.path.join(
 )
 BASE_DIR = ROOT_DIR
 
+# Importing the secret key from the .env file
 SECRET_KEY = os.getenv("secret_key")
 
-DEBUG = os.getenv("debug") == 'True'
-DEBUG_TOOLBAR = os.getenv("debug_toolbar") == 'True'
+# Setting up working variables.
+# These can be manually switched or imported from the .env file if you have multiple working environments.
+DEBUG = True
+DEBUG_TOOLBAR = True
 
-DEVELOPMENT = os.getenv("development") == 'True'
-PRODUCTION = os.getenv("production") == 'True'
+DEVELOPMENT = True
+PRODUCTION = False
 
+# Setting up host URLs that will be able to serve our app
 ALLOWED_HOSTS = []
 
-if DEBUG:
+# Adding ngrok to hosts in DEVELOPMENT (more on ngrok later)
+if DEVELOPMENT:
     ALLOWED_HOSTS += '*.ngrok.io'
 
 
-# Application definition
-
+# Django Boilerplate
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -62,9 +67,8 @@ TEMPLATES = [
     },
 ]
 
-# Database
+# SQLite Database (Django Boilerplate)
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -73,9 +77,8 @@ DATABASES = {
 }
 
 
-# Password validation
+# Password validation (Django Boilerplate)
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -92,9 +95,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# Internationalization (Django Boilerplate)
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -107,6 +109,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Adding our API keys from our .env file
 SLACK_APP_TOKEN = os.getenv("slack_app_token")
 SLACK_BOT_TOKEN = os.getenv("slack_bot_token")
 SLACK_VERIFICATION_TOKEN = os.getenv("slack_verification_token")

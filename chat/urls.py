@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.views.static import serve
 from chat import views as chat_views
 from django.conf.urls import include, url
-from django.contrib.admin.views.decorators import staff_member_required
 
 urlpatterns = [
     #

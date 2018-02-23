@@ -5,43 +5,9 @@ import slackdown
 import json
 from chat import managers
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.timezone import now
-from django.template.loader import render_to_string
-from django.conf import settings
-from django.urls import reverse
 
 
-class LastModifiedMixin(models.Model):
-    """
-    Abstract model mixin with last modified and created datetime stamps.
-    """
-    create_datetime = models.DateTimeField(
-        verbose_name='Create date/time (Pacific)',
-    )
-    last_modified_datetime = models.DateTimeField(
-        verbose_name='Last modified date/time (Pacific)',
-        null=True
-    )
-    edited = models.BooleanField(
-        default=False
-    )
-
-    class Meta:
-        abstract = True
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.create_datetime = now()
-        else:
-            self.last_modified_datetime = now()
-            self.edited = True
-
-        super(LastModifiedMixin, self).save(*args, **kwargs)
-
-
-@python_2_unicode_compatible
-class ChatChannel(LastModifiedMixin):
+class ChatChannel(models.Model):
     """
     A Slack channel logged by this application.
     """
@@ -57,7 +23,6 @@ class ChatChannel(LastModifiedMixin):
     #
     # Website fields
     #
-
     slug = models.SlugField(
         max_length=300,
         unique=True,
@@ -81,24 +46,6 @@ class ChatChannel(LastModifiedMixin):
     def __str__(self):
         return self.slug
 
-    @property
-    def detail_html(self):
-        messages = ChatMessage.messages.live().filter(
-            channel__channel_id=self.channel_id
-        ).select_related()
-
-        context = {
-            'bucket': settings.AWS_BUCKET_NAME,
-            'channel': self,
-            'messages': messages
-        }
-
-        template = 'detail.html'
-        return render_to_string(template, context)
-
-    def get_absolute_url(self):
-        return reverse('chat_live', args=(self.channel_id,))
-
     def save(self, *args, **kwargs):
         import tasks
         if not self.pk:
@@ -114,8 +61,7 @@ class ChatChannel(LastModifiedMixin):
         tasks.publish_json(self.channel_id)
 
 
-@python_2_unicode_compatible
-class ChatUser(LastModifiedMixin):
+class ChatUser(models.Model):
     """
     A Slack user that creates messages.
     """
@@ -153,15 +99,13 @@ class ChatUser(LastModifiedMixin):
         return self.real_name or self.name
 
 
-@python_2_unicode_compatible
-class ChatMessage(LastModifiedMixin):
+class ChatMessage(models.Model):
     """
     A Slack message posted to a channel by a user.
     """
     #
     # Slack fields
     #
-
     ts = models.CharField(
         max_length=300,
         help_text='Timestamp of the original message used by Slack as unique identifier.'
@@ -184,15 +128,14 @@ class ChatMessage(LastModifiedMixin):
     #
     # Website fields
     #
-
     live = models.BooleanField(
         default=True,
         help_text='Is this message live, or was it deleted on Slack?'
     )
 
-    html = models.CharField(
+    html = models.TextField(
         max_length=3000,
-        help_text='HTML code representaion of the message.'
+        help_text='HTML code representation of the message.'
     )
 
     override_text = models.TextField(
@@ -225,7 +168,6 @@ class ChatMessage(LastModifiedMixin):
             self.html = slackdown.parse(json.loads(self.data))
 
         # convert user references with full names (or usernames as a fallback)
-        # @U02C0SUU9 becomes @BenWelsh
         users = re.finditer(r'@([\w\d]*)', self.html)
         for u in users:
             match = u.group(1)
@@ -238,15 +180,8 @@ class ChatMessage(LastModifiedMixin):
                     self.html[u.end():]
                 )
 
-    def get_absolute_url(self):
-        return "{base_url}#message-{ts}".format(
-            base_url=reverse('chat_live', args=(self.channel.channel_id,)),
-            ts=self.ts
-        )
-
     def save(self, *args, **kwargs):
         self.update_html()
-        self.ts = json.loads(self.data)['ts']
 
         super(ChatMessage, self).save(*args, **kwargs)
 

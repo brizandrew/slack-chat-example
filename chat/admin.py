@@ -4,7 +4,6 @@ from .models import ChatChannel, ChatMessage, ChatUser
 
 @admin.register(ChatChannel)
 class ChatChannelAdmin(admin.ModelAdmin):
-
     fieldsets = (
         ("Metadata", {
             'fields': (
@@ -39,7 +38,6 @@ class ChatMessageAdmin(admin.ModelAdmin):
                 'override_text',
                 'user',
                 'live',
-                'edited',
             )
         }),
     )
@@ -50,7 +48,6 @@ class ChatMessageAdmin(admin.ModelAdmin):
         'user',
         'live',
         'overridden',
-        'edited',
     )
     search_fields = ('text', 'user')
     save_on_top = True
@@ -61,7 +58,6 @@ class ChatMessageAdmin(admin.ModelAdmin):
         'html',
         'user',
         'live',
-        'edited',
         'overridden',
     ]
 
