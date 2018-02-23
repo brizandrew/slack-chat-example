@@ -8,8 +8,6 @@ ROOT_DIR = os.path.join(
 )
 BASE_DIR = ROOT_DIR
 
-SITE_URL = os.getenv("site_url")
-
 SECRET_KEY = os.getenv("secret_key")
 
 DEBUG = os.getenv("debug") == 'True'

@@ -105,8 +105,7 @@ class ChatChannel(LastModifiedMixin):
             msg = '{c} This is now a `Chat` channel. All messages from now will be recorded in Chat.'
             msg += ' Start a message with a `{c}` if you don\'t want it recorded and potentially published.'
             msg = msg.format(
-                c=tasks.CHAT_COMMENT_TAG,
-                url=settings.SITE_URL + '/admin/chat/'
+                c=tasks.CHAT_COMMENT_TAG
             )
             tasks.post_slack_message(self.channel_id, text=msg)
 
