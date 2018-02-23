@@ -1,4 +1,5 @@
 # Slack Chat
+**Still working on this and the accompanying post.**
 
 A Django app to create a public API for a private Slack channel's messages.
 
