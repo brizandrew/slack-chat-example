@@ -8,7 +8,7 @@ if __name__ == "__main__":
     repo_dir = os.path.dirname(os.path.realpath(__file__))
 
     # Load env variables from .env config file
-    cp = configparser.SafeConfigParser()
+    cp = configparser.ConfigParser(interpolation=None)
     cp.read(os.path.join(repo_dir, ".env"))
 
     # Load the files variables into the environment
