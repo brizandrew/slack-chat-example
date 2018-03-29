@@ -181,6 +181,7 @@ class ChatMessage(models.Model):
                 )
 
     def save(self, *args, **kwargs):
+        self.ts = self.data['ts']
         self.update_html()
 
         super(ChatMessage, self).save(*args, **kwargs)

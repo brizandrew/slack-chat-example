@@ -1,14 +1,11 @@
 import json
 import tasks
 from django.conf import settings
-from slackclient import SlackClient
-from models import ChatChannel, ChatUser, ChatMessage
+from models import ChatChannel
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 
 
 class SlackEventHandler(object):
-    slack = SlackClient(settings.SLACK_APP_TOKEN)
-
     def handle(self, request):
         payload = self.parse_request(request)
         token = payload['token']
@@ -20,7 +17,6 @@ class SlackEventHandler(object):
         if request_type == 'url_verification':
             event_function = self.url_verification
         elif request_type == 'event_callback':
-            self.log_request(payload)
             event_name = payload['event']['type']
             event_function_name = 'event_%s' % event_name
             try:
@@ -42,15 +38,6 @@ class SlackEventHandler(object):
             verify = True
 
         return verify
-
-    def log_request(self, payload):
-        pass
-        # from pprint import pprint
-        # with open("slack_log.txt", "a") as f:
-        #     f.write('\n\n~~~~~~~~~~~~~~~~~~~~~~~~\n')
-        #     f.write('New Request: %s\n' % payload['event']['type'])
-        #     f.write('~~~~~~~~~~~~~~~~~~~~~~~~\n')
-        #     pprint(payload, f)
 
     def url_verification(self, payload):
         response_data = {}
@@ -91,22 +78,4 @@ class SlackEventHandler(object):
 
     def message_message_deleted(self, channel, data):
         tasks.delete_message(data)
-        return HttpResponse(status=200)
-
-    def message_file_share(self, channel, data):
-        self.slack.api_call(
-            'files.sharedPublicURL',
-            file=data['file']['id']
-        )
-
-        user, c = ChatUser.objects.get_or_create(
-            user_id=data['user']
-        )
-        m = ChatMessage(
-            data=data,
-            user=user,
-            channel=channel
-        )
-        m.save()
-
         return HttpResponse(status=200)

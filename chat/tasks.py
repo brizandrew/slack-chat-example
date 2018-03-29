@@ -50,7 +50,7 @@ def post_slack_message(channel, text=None, attachments=None):
     )
 
 
-def publish_json(channel_id, callback="callback"):
+def publish_json(channel_id):
     """
     Render and publish a JSON feed representation of a channel
     to a local file
@@ -60,7 +60,7 @@ def publish_json(channel_id, callback="callback"):
 
     # Get the JSON from the ChatJson and convert to JSONP
     json_string = chat_views.ChatJson.as_string(channel)
-    jsonp_string = "%s(%s);" % (callback, json_string)
+    jsonp_string = "%s(%s);" % ("callback", json_string)
 
     # Used for development or small server load.
     # Consider uploading to a server bucket instead for optimal performance.

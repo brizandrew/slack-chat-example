@@ -15,15 +15,9 @@ urlpatterns = [
     #  Slack
     #
     url(
-        r'^slack/$',
+        r'^slack/',
         chat_views.SlackEventWebhook.as_view(),
         name='slack-event-webhook'
-    ),
-
-    url(
-        r'^slack-slash/',
-        chat_views.SlackSlashWebhook.as_view(),
-        name='slack-slash-webhook'
     ),
 
 
